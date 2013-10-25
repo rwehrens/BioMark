@@ -1,0 +1,7 @@
+- before release of 0.4.0: extend gen.data function to include
+  functionality used for the BiomCutoff paper.
+  Also: remove names in lasso-based selection.
+
+- extensibility: instead of a predefined set of functions, the user
+  should be able to use a function of his/her own. This way we do not
+  have to keep on adding new things
