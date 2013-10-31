@@ -37,7 +37,8 @@ lasso.stab <- function(X, Y, scale.p = NULL,
 
 
 ########################################################################
-### Functions below select by taking the ntop biggest coefficients
+### Functions below select by taking the ntop biggest coefficients,
+### or, alternatively the ntop fraction of biggest coefficients.
 ########################################################################
 
 ## New selection function for the ntop highest coefs. The last
@@ -48,6 +49,11 @@ lasso.stab <- function(X, Y, scale.p = NULL,
 select.aux <- function(object, variables) {
   ntop <- biom.options()$ntop
   nvar <- dim(object)[2]
+
+  ## if ntop is a fraction between 0 and 1, it is taken to mean the
+  ## fraction of variables to be selected. Typically 0.1.
+  if (ntop > 0 & ntop < 1)
+      ntop <- round(ntop * nvar)
 
   if (is.matrix(object))
     object <- array(object, c(nrow(object), ncol(object), 1))

@@ -63,11 +63,14 @@ data(SpikeNeg)
   subset, basically presenting the control and group1 information with
   hand-picked spike-in features. The data in SpikePos and SpikeNeg use
   CAMERA grouping to automatically determine which features are
-  corresponding to which spike-in compounds.
+  corresponding to which spike-in compounds. Raw data in CDF format are
+  available from the MetaboLights repository.
 }
 \seealso{spikedApples}
 \author{Pietro Franceschi}
 \source{
+  http://www.ebi.ac.uk/metabolights/MTBLS59
+  
   P. Franceschi, D. Masuero, U. Vrhovsek, F. Mattivi and R. Wehrens: A
   benchmark spike-in data set for biomarker identification in
   metabolomics. J. Chemom. 26, 16-24 (2012).

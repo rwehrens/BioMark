@@ -47,7 +47,9 @@ biom.options(\dots)
     \item{ntop}{The number of "top" coefficients taken into account in
       stability-based biomarker identification. If a variable appears
       consistently among the \code{ntop} biggest coefficients, it is said
-      to be stable. Default: 10.}
+      to be stable. If ntop is a number between 0 and 1, it is taken to
+      indicate the fraction of variables to be included in the model.
+      Default: 10.}
     \item{min.present}{The minimal fraction of times a variable should be in
       the top list to be considered as a potential biomarker
       (stability-based identification). Setting this
