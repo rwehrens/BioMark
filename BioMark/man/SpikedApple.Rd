@@ -1,4 +1,5 @@
 \name{SpikedApple}
+\alias{SpikedApple}
 \alias{SpikeNeg}
 \alias{SpikePos}
 \alias{neg.markers}
