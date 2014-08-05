@@ -1,7 +1,12 @@
+importFrom(st, studentt.fun, shrinkt.fun)
+importFrom(MASS, mvrnorm)
+import(pls)
+import(glmnet)
+
 export(HCthresh, biom.options, scalefun,
        gen.data, gen.data2, get.biom, traceplot,
        ROC, ROC.default, AUC, roc.value,
-       get.segments, .biom.options, selection)
+       get.segments, selection)
 S3method(print, ROC)
 S3method(plot, ROC)
 S3method(lines, ROC)

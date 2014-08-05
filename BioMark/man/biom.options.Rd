@@ -7,11 +7,13 @@
   the \pkg{BioMark} package, or to return the current options.
 }
 \usage{
-biom.options(\dots)
+biom.options(\dots, reset = FALSE)
 }
 \arguments{
   \item{\dots}{a single list, a single character vector, or any number
     of named arguments (\var{name = value}).}
+  \item{reset}{logical: if TRUE all options are set to their factory
+    defaults.}
 }
 \details{
   If called with no arguments, or with an empty list as the single
@@ -28,11 +30,10 @@ biom.options(\dots)
   arguments \var{name = value}.  For each argument, the option named
   \var{name} will be given the value \var{value}.
 
-  The options are saved in a variable \code{.biom.options} in the global
-  environment, and remain in effect until the end of the session.  If
-  the environment is saved upon exit, they will be remembered in the
-  next session.  The factory defaults can be restored by removing
-  \code{.biom.options} from the global environment.
+  The options are saved in an envirtonment variable
+  \code{.biom.Options}, and remain in effect until the end of the
+  session.  If the environment is saved upon exit, they will be
+  remembered in the next session.
 
   The recognised options are:
   \describe{
@@ -80,7 +81,7 @@ biom.options(\dots)
 \section{Side Effects}{
   If any named argument (or list element) was provided,
   \code{biom.options} updates the elements of the option list
-  \code{.biom.options} in the global environment.
+  \code{.biom.Options$options}.
 }
 \value{
   A list with the (possibly changed) options.  If any named argument (or
@@ -98,14 +99,13 @@ biom.options("max.seg")
 
 ## Set options:
 biom.options(max.seg = 100, oob.fraction = .2)
-.biom.options$lasso$alpha <- .75
+biom.options(lasso = list(alpha = .75, nlambda = 50))
 biom.options()
 ## the next line removes some options - for these, glmnet defaults will be used
 biom.options(lasso = list(alpha = .9, family = "binomial"))
 
 ## Restore factory settings:
-rm(.biom.options)
-biom.options()
+biom.options(reset = TRUE)
 }
 \keyword{classification}
 \keyword{multivariate}

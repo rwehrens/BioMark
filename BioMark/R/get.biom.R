@@ -115,16 +115,6 @@ get.biom <- function(X, Y, fmethod = "all",
            coef = {
              ## relevant info: coefficients 
              woppa <- huhn.models
-
-             #### implementation up to and including 0.3.2:
-             ## orderfun <- function(xx) {
-             ##   huhn.order <- order(abs(xx), decreasing = TRUE)
-             ##   list(biom.indices = huhn.order, coef.size = xx)
-             ## }
-
-             ## woppa <- lapply(1:dim(huhn.models)[2],
-             ##                 function(i, x) orderfun(x[,i]),
-             ##                 huhn.models)
            },
            stab = {
              ## relevant info:

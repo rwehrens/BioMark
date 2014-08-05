@@ -1,3 +1,7 @@
+0.4.2: - updated maintainers' email address
+       - fixed NAMESPACE issues
+       - changed the way global options are handled
+
 0.4.1: - updated citation information: an appropriate reference for
        	 the software package is now available, rather than a
        	 reference to the first paper in which the package was used.

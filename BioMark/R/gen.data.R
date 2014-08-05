@@ -2,7 +2,6 @@ gen.data <- function(ncontrol, ntreated = ncontrol, nvar, nbiom = 5,
                      group.diff = .5, nsimul = 100,
                      means = rep(0, nvar), cormat = diag(nvar))
 {
-  require(MASS)
   nobj <- ncontrol + ntreated
   
   X <- array(0, c(nobj, nvar, nsimul))
