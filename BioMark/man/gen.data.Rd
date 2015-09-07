@@ -69,6 +69,7 @@ gen.data2(X, ncontrol, nbiom, spikeI,
   }
 \author{Ron Wehrens}
 \examples{
+\dontrun{
 X <- gen.data(10, nvar = 200)
 names(X)
 dim(X$X)
@@ -76,12 +77,10 @@ dim(X$X)
 set.seed(7)
 simdat <- gen.data(10, nvar = 1200, nbiom = 22, nsimul = 1,
                    group.diff = 2)
-\dontrun{
 simdat.stab <- get.biom(simdat$X[,,1], simdat$Y, fmethod = "all",
                         type = "stab", ncomp = 3, scale.p = "auto")
 ## show LASSO success
 traceplot(simdat.stab, lty = 1, col = rep(2:1, c(22, 1610)))
-}
 
 data(SpikePos)
 real.markers <- which(SpikePos$annotation$found.in.standards > 0)
@@ -90,7 +89,6 @@ X.no.diff <- SpikePos$data[1:20, -real.markers]
 set.seed(7)
 simdat2 <- gen.data2(X.no.diff, ncontrol = 10, nbiom = 22,
                      spikeI = c(1.2, 1.4, 2), nsimul = 1)
-\dontrun{
 simdat2.stab <- get.biom(simdat2$X[,,1], simdat$Y,
                          fmethod = "all", type = "stab", ncomp = 3,
                          scale.p = "auto")
