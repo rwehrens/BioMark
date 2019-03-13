@@ -1,30 +1,28 @@
-lasso.stab <- function(X, Y, scale.p = NULL,
-                       segments = NULL, variables = NULL,
-                       ...)
+lasso.stab <- function(X, Y, sgmnts = NULL, variables = NULL, ...)
 {
   lasso.opt <- biom.options()$lasso
   
   ## do one run to obtain lambda sequence
   ## this one also will give a warning in case of an inappropriate family
-  lambdas <- as.numeric(colnames(lasso.coef(X, Y, scale.p, ...)))
+  lambdas <- as.numeric(colnames(lasso.coef(X, Y, ...)))
   if (is.null(lasso.opt$lambda))
     lasso.opt$lambda <- lambdas
   
   ## get all coefficients - note that they usually are calculated for only
   ## a part of the variables in each iteration
-  all.coefs <- lapply(1:ncol(segments),
+  all.coefs <- lapply(1:ncol(sgmnts),
                       function(i, xx, ss, vv, yy) {
                         huhn <- lasso.coef(xx[-ss[,i], vv[,i]],
-                                           yy[-ss[,i]], scale.p = scale.p,
+                                           yy[-ss[,i]], 
                                            lasso.opt = lasso.opt, ...)
                         (huhn != 0) + 0 ## + 0 to convert to nrs
                       },
-                      X, segments, variables, Y)
+                      X, sgmnts, variables, Y)
 
   x.coef <- matrix(0, ncol(X), length(lambdas))
   dimnames(x.coef) <- list(NULL, lambdas)
   ## count how often non-zero - this can probably be written more elegantly
-  for (i in 1:ncol(segments)) 
+  for (i in 1:ncol(sgmnts)) 
     x.coef[variables[,i],] <- x.coef[variables[,i],] + all.coefs[[i]]
   
   ## finally, correct for the number of times every variable has had the
@@ -69,66 +67,59 @@ select.aux <- function(object, variables) {
 }
 
 
-pcr.stab <- function(X, Y, ncomp = 2, scale.p = NULL,
-                       segments = NULL, variables = NULL, ...)
+pcr.stab <- function(X, Y, ncomp = 2, sgmnts = NULL, variables = NULL, ...)
 {
-  x.coef <- array(NA, c(ncol(segments), ncol(X), length(ncomp)))
-  for (i in 1:ncol(segments))
+  x.coef <- array(NA, c(ncol(sgmnts), ncol(X), length(ncomp)))
+  for (i in 1:ncol(sgmnts))
     x.coef[i,variables[,i],] <-
-      pcr.coef(X[-segments[,i], variables[,i]], Y[-segments[,i]],
-                 ncomp = ncomp, scale.p = scale.p, ...)
+      pcr.coef(X[-sgmnts[,i], variables[,i]], Y[-sgmnts[,i]],
+                 ncomp = ncomp, ...)
 
   select.aux(x.coef, variables)
 }
 
-pls.stab <- function(X, Y, ncomp = 2, scale.p = NULL,
-                       segments = NULL, variables = NULL, ...)
+pls.stab <- function(X, Y, ncomp = 2, sgmnts = NULL, variables = NULL, ...)
 {
-  x.coef <- array(NA, c(ncol(segments), ncol(X), length(ncomp)))
-  for (i in 1:ncol(segments))
+  x.coef <- array(NA, c(ncol(sgmnts), ncol(X), length(ncomp)))
+  for (i in 1:ncol(sgmnts))
     x.coef[i,variables[,i],] <-
-      pls.coef(X[-segments[,i], variables[,i]], Y[-segments[,i]],
-                 ncomp = ncomp, scale.p = scale.p, ...)
+      pls.coef(X[-sgmnts[,i], variables[,i]], Y[-sgmnts[,i]],
+                 ncomp = ncomp, ...)
   
   select.aux(x.coef, variables)
 }
 
-vip.stab <- function(X, Y, ncomp = 2, scale.p = NULL,
-                     segments = NULL, variables = NULL, ...)
+vip.stab <- function(X, Y, ncomp = 2, sgmnts = NULL, variables = NULL, ...)
 {
-  x.coef <- array(NA, c(ncol(segments), ncol(X), length(ncomp)))
-  for (i in 1:ncol(segments)) 
+  x.coef <- array(NA, c(ncol(sgmnts), ncol(X), length(ncomp)))
+  for (i in 1:ncol(sgmnts)) 
     x.coef[i,variables[,i],] <-
-      vip.coef(X[-segments[,i], variables[,i]], Y[-segments[,i]],
-               ncomp = ncomp, scale.p = scale.p, ...)
+      vip.coef(X[-sgmnts[,i], variables[,i]], Y[-sgmnts[,i]],
+               ncomp = ncomp, ...)
   
   select.aux(x.coef, variables)
 }
 
 ### the dots in the shrinkt.stab and studentt.stab functions are
 ### necessary to catch extra arguments to other functions.
-shrinkt.stab <- function(X, Y, scale.p = NULL,
-                         segments = NULL, variables = NULL, ...)
+shrinkt.stab <- function(X, Y, sgmnts = NULL, variables = NULL, ...)
 {
-  x.coef <- matrix(NA, ncol(segments), ncol(X))
+  x.coef <- matrix(NA, ncol(sgmnts), ncol(X))
   cat("\n")
-  for (i in 1:ncol(segments)) {
-    x.coef[i,variables[,i]] <- shrinkt.coef(X[-segments[,i], variables[,i]], 
-                                            Y[-segments[,i]],
-                                            scale.p = scale.p, ...)
+  for (i in 1:ncol(sgmnts)) {
+    x.coef[i,variables[,i]] <- shrinkt.coef(X[-sgmnts[,i], variables[,i]], 
+                                            Y[-sgmnts[,i]], ...)
   }
   
   select.aux(x.coef, variables)
 }
 
-studentt.stab <- function(X, Y, scale.p = NULL,
-                          segments = NULL, variables = NULL, ...)
+studentt.stab <- function(X, Y, sgmnts = NULL, variables = NULL, ...)
 {
-  x.coef <- matrix(NA, ncol(segments), ncol(X))
-  for (i in 1:ncol(segments))
-    x.coef[i,variables[,i]] <- studentt.coef(X[-segments[,i], variables[,i]], 
-                                             Y[-segments[,i]],
-                                             scale.p = scale.p, ...)
+  x.coef <- matrix(NA, ncol(sgmnts), ncol(X))
+  for (i in 1:ncol(sgmnts))
+    x.coef[i,variables[,i]] <- studentt.coef(X[-sgmnts[,i], variables[,i]], 
+                                             Y[-sgmnts[,i]], ...)
   
   select.aux(x.coef, variables)
 }

@@ -11,12 +11,13 @@
 \value{A vector containing the indices of the selected variables.}
 \seealso{\code{\link{get.biom}}}
 \examples{
+data(spikedApples)
+X <- sqrt(spikedApples$dataMatrix)
+Y <- factor(rep(0:1, each = 10))
+
 ## stability-based selection
 set.seed(17)
-data(spikedApples)
-apple.stab <- get.biom(X = spikedApples$dataMatrix,
-                       Y = factor(rep(1:2, each = 10)),
-                       ncomp = 2:3, type = "stab")
+apple.stab <- get.biom(X = X, Y = Y,, ncomp = 2:3, type = "stab")
 selected.variables <- selection(apple.stab)
 }
 \keyword{models}

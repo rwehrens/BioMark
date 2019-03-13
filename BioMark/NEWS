@@ -1,3 +1,15 @@
+0.4.6: - removed pre-cooked arguments in the calls to glmnet to obtain
+       	 similar results to calling glmnet directly
+       - replaced object name "segments" with "sgmnts" to avoid
+       	 confusion with the "segments" function
+       - fixed some small problems in the examples
+       - removed scale.p parameter (many functions!) because it was
+         not completely consistent: some methods like the lasso
+       	 perform their own scaling. For log- , sqrt- and auto-scaling
+       	 this is no problem: the first two are independent of any chosen
+       	 subset, and the last one is taken care of by the fitting
+       	 procedures. Pareto scaling is no longer supported.
+
 0.4.2: - updated maintainers' email address
        - fixed NAMESPACE issues
        - changed the way global options are handled

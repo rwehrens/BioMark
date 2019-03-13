@@ -72,36 +72,32 @@ T. Lumley: ROC curves - in Programme's Niche, R News 4/1, June 2004.
 \author{Ron Wehrens}
 \examples{
 data(spikedApples)
-apple.coef <- get.biom(X = spikedApples$dataMatrix,
-                       Y = rep(1:2, each = 10),
-                       fmethod = "vip",
+X <- sqrt(spikedApples$dataMatrix)
+Y <- factor(rep(0:1, each = 10))
+apple.coef <- get.biom(X = X, Y = Y, fmethod = "vip",
                        ncomp = 3, type = "coef")
 
 ## ROC curve for all VIP values, ordered according to size
-true.biom <- (1:ncol(spikedApples$dataMatrix) \%in\% spikedApples$biom)
-vip.roc <- ROC(apple.coef$vip, true.biom)
+vip.roc <- ROC(apple.coef$vip, spikedApples$biom)
 plot(vip.roc)
 
 ## Add stability-based selection point
-apple.stab <- get.biom(X = spikedApples$dataMatrix,
-                       Y = rep(1:2, each = 10),
+apple.stab <- get.biom(X = X, Y = Y,
                        fmethod = "vip",
                        ncomp = 3, type = "stab")
-stab.roc <- roc.value(apple.stab$vip[[1]]$biom.indices,
+stab.roc <- roc.value(unlist(selection(apple.stab)),
                       spikedApples$biom,
-                      totalN = ncol(spikedApples$dataMatrix))
+                      totalN = ncol(X))
 points(stab.roc, col = "red", pch = 19, cex = 1.5)
 
 \dontrun{
-## Add HC-based selection point
-## Attention: takes approx. 2 minutes on my PC
-apple.HC <- get.biom(X = spikedApples$dataMatrix,
-                     Y = rep(1:2, each = 10),
+## Add HC-based selection point (approx. 20 secs on my laptop)
+apple.HC <- get.biom(X = X, Y = Y,
                      fmethod = "vip",
                      ncomp = 3, type = "HC")
-HC.roc <- roc.value(apple.HC$vip$biom.indices,
+HC.roc <- roc.value(unlist(selection(apple.HC)),
                     spikedApples$biom,
-                    totalN = ncol(spikedApples$dataMatrix))
+                    totalN = ncol(X))
 points(HC.roc, col = "blue", pch = 19, cex = 1.5)
 }
 }

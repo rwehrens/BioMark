@@ -1,7 +1,7 @@
 Package: BioMark
 Type: Package
 Title: Find Biomarkers in Two-Class Discrimination Problems
-Version: 0.4.5
+Version: 0.4.6
 Author: Ron Wehrens, Pietro Franceschi
 Maintainer: Ron Wehrens <ron.wehrens@gmail.com>
 Description: Variable selection methods are provided for several classification methods: the lasso/elastic net, PCLDA, PLSDA, and several t-tests. Two approaches for selecting cutoffs can be used, one based on the stability of model coefficients under perturbation, and the other on higher criticism.

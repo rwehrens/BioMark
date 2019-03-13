@@ -4,8 +4,7 @@
 
 get.biom <- function(X, Y, fmethod = "all",
                      type = c("stab", "HC", "coef"),
-                     ncomp = 2, biom.opt = biom.options(),
-                     scale.p = "auto", ...)
+                     ncomp = 2, biom.opt = biom.options(), ...)
 {
   ## allow for older fmethods pclda and plsda
   if ("plsda" %in% fmethod) {
@@ -62,32 +61,32 @@ get.biom <- function(X, Y, fmethod = "all",
       ## for equal class sizes this is .5
       if (is.null(oob.size))
         oob.size <- round(smallest.class.fraction * oob.fraction * length(Y))
-      segments <- get.segments(Y, oob.size = oob.size,
-                               max.seg = biom.opt$max.seg)
+      sgmnts <- get.segments(Y, oob.size = oob.size,
+                             max.seg = biom.opt$max.seg)
     } else { ## we assume regression
       if (is.null(oob.size))
         oob.size <- round(oob.fraction * length(Y))
-      segments <- get.segments(1:length(Y), 1:length(Y),
-                               oob.size = oob.size,
-                               max.seg = biom.opt$max.seg)
+      sgmnts <- get.segments(1:length(Y), 1:length(Y),
+                             oob.size = oob.size,
+                             max.seg = biom.opt$max.seg)
     }
     
     variable.fraction <- biom.opt$variable.fraction
     if (variable.fraction < 1) { # use different subsets of variables
       nvar <- round(variable.fraction * ncol(X))
-      variables <- sapply(1:ncol(segments),
+      variables <- sapply(1:ncol(sgmnts),
                           function(i) sample(ncol(X), nvar))
       nvars <- table(variables)
       if (length(nvars) < ncol(X))
         stop(paste(c("Too few variables in resampling scheme:,\ntry",
                      "with a larger variable.fraction or use",
-                     "more segments.")))
+                     "more sgmnts.")))
     } else {
-      variables <- matrix(1:ncol(X), nrow = ncol(X), ncol = ncol(segments))
+      variables <- matrix(1:ncol(X), nrow = ncol(X), ncol = ncol(sgmnts))
       nvars <- rep(biom.opt$max.seg, ncol(X))
     }
   } else {
-    variables <- NULL
+    variables <- sgmnts <- NULL
     
     if (type == "HC") {
       nset <- biom.opt$nset
@@ -105,9 +104,8 @@ get.biom <- function(X, Y, fmethod = "all",
     ## Here the real work is done: call the modelling functions
     huhn.models <- do.call(fname[m], 
                            list(X = X, Y = Y,
-                                segments = segments,
+                                sgmnts = sgmnts,
                                 ncomp = ncomp,
-                                scale.p = scale.p,
                                 variables = variables, ...))
     ## huhn.models is always a matrix, possibly with one column
 
@@ -179,7 +177,7 @@ get.biom <- function(X, Y, fmethod = "all",
     ## Possible PCR, PLS and VIP calculations for HC are done here
     which.pcr <- which(substr(names(result), 1, 5) == "pcr")
     if (length(which.pcr) > 0) {
-      huhn.models <- pval.pcr(X, Y, ncomp, scale.p, nset)
+      huhn.models <- pval.pcr(X, Y, ncomp, nset)
       result[[which.pcr]] <-
         lapply(1:ncol(huhn.models),
                function(i)
@@ -203,7 +201,7 @@ get.biom <- function(X, Y, fmethod = "all",
       }
 
       ## next statement takes some time...
-      huhn.models <- pval.plsvip(X, Y, ncomp, scale.p, nset, smethod)
+      huhn.models <- pval.plsvip(X, Y, ncomp, nset, smethod)
 
       if (length(which.pls) > 0) {
         result[[which.pls]] <-

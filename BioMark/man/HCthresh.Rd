@@ -45,8 +45,9 @@ HCthresh(pvec, alpha = 0.1, plotit = FALSE)
 }
 \examples{
 data(spikedApples)
-bms <- get.biom(spikedApples$dataMatrix, rep(0:1, each = 10),
-                type = "coef", fmethod = "studentt")
+X <- sqrt(spikedApples$dataMatrix)
+Y <- factor(rep(0:1, each = 10))
+bms <- get.biom(X, Y, type = "coef", fmethod = "studentt")
 bms.pvalues <- 2 * (1 - pt(abs(bms[[1]]), 18))
 sum(bms.pvalues < .05)                           ## 15
 sum(p.adjust(bms.pvalues, method = "fdr") < .05) ## 4

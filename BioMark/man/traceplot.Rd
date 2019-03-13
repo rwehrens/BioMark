@@ -20,8 +20,9 @@ Selection. J. R. Statist. Soc. B 72, 417-473 (2010)}
 
 \seealso{\code{\link{get.biom}}}
 \examples{
-library(BioMark)
 data(spikedApples)
+X <- sqrt(spikedApples$dataMatrix)
+Y <- factor(rep(0:1, each = 10))
 
 mycols <- rep("gray", ncol(spikedApples$dataMatrix))
 mycols[spikedApples$biom] <- "red"
@@ -29,14 +30,10 @@ myltys <- rep(2, ncol(spikedApples$dataMatrix))
 myltys[spikedApples$biom] <- 1
 
 par(mfrow = c(1,2))
-apple.coef <- get.biom(X = spikedApples$dataMatrix,
-                       Y = factor(rep(0:1, each = 10)),
-                       ncomp = 2:3, type = "coef")
+apple.coef <- get.biom(X = X, Y = Y, ncomp = 2:3, type = "coef")
 traceplot(apple.coef, col = mycols, lty = myltys)
 
-apple.stab <- get.biom(X = spikedApples$dataMatrix,
-                       Y = factor(rep(0:1, each = 10)),
-                       fmethod = c("vip","lasso"), type = "stab")
+apple.stab <- get.biom(X = X, Y = Y, fmethod = c("vip","lasso"), type = "stab")
 traceplot(apple.stab, col = mycols, lty = myltys)
 }
 \keyword{multivariate}

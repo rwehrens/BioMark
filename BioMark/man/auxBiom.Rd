@@ -20,33 +20,26 @@
 modelling methods. Not to be called directly by the user - use function
 \code{get.biom} for that.}
 \usage{
-pcr.coef(X, Y, ncomp, scale.p, \dots)
-pcr.stab(X, Y, ncomp, scale.p,
-           segments = NULL, variables = NULL, \dots)
+pcr.coef(X, Y, ncomp, \dots)
+pcr.stab(X, Y, ncomp, sgmnts = NULL, variables = NULL, \dots)
 %
-pls.coef(X, Y, ncomp, scale.p, \dots)
-pls.stab(X, Y, ncomp, scale.p,
-           segments = NULL, variables = NULL, \dots)
+pls.coef(X, Y, ncomp, \dots)
+pls.stab(X, Y, ncomp, sgmnts = NULL, variables = NULL, \dots)
 %
-vip.coef(X, Y, ncomp, scale.p, \dots)
-vip.stab(X, Y, ncomp, scale.p,
-         segments = NULL, variables = NULL, \dots)
+vip.coef(X, Y, ncomp, \dots)
+vip.stab(X, Y, ncomp, sgmnts = NULL, variables = NULL, \dots)
 %
-lasso.coef(X, Y, scale.p,
-           lasso.opt = biom.options()$lasso,\dots)
-lasso.stab(X, Y, scale.p,
-           segments = NULL, variables = NULL, \dots)
+lasso.coef(X, Y, lasso.opt = biom.options()$lasso,\dots)
+lasso.stab(X, Y, sgmnts = NULL, variables = NULL, \dots)
 %
-shrinkt.coef(X, Y, scale.p, \dots)
-shrinkt.stab(X, Y, scale.p,
-             segments = NULL, variables = NULL, \dots)
+shrinkt.coef(X, Y, \dots)
+shrinkt.stab(X, Y, sgmnts = NULL, variables = NULL, \dots)
 %
-studentt.coef(X, Y, scale.p, \dots)
-studentt.stab(X, Y, scale.p,
-              segments = NULL, variables = NULL, \dots)
+studentt.coef(X, Y, \dots)
+studentt.stab(X, Y, sgmnts = NULL, variables = NULL, \dots)
 %
-pval.pcr(X, Y, ncomp, scale.p, npermut)
-pval.plsvip(X, Y, ncomp, scale.p, npermut, smethod)
+pval.pcr(X, Y, ncomp, npermut)
+pval.plsvip(X, Y, ncomp, npermut, smethod)
 }
 \arguments{
   \item{X}{Data matrix. Usually the number of columns (variables) is
@@ -55,12 +48,7 @@ pval.plsvip(X, Y, ncomp, scale.p, npermut, smethod)
   \item{ncomp}{Number of latent variables to use in PCR and PLS (VIP)
     modelling. In function \code{get.biom} this may be a vector; in all
     other functions it should be one number. Default: 2.}
-  \item{scale.p}{Scaling. This is performed individually in every
-    crossvalidation iteration, and can have a profound effect on the
-    results. Default: "none". Other possible choices: "auto" for
-    autoscaling, "pareto" for pareto scaling, "log" and "sqrt" for log
-    and square root scaling, respectively.}
-  \item{segments}{matrix where each column indicates a set of samples to
+  \item{sgmnts}{matrix where each column indicates a set of samples to
     be left out of the analysis.}
   \item{variables}{indices of variables to be used in the analysis.}
   \item{lasso.opt}{optional arguments to the \code{glmnet} function, in
@@ -80,6 +68,6 @@ pval.plsvip(X, Y, ncomp, scale.p, npermut, smethod)
   coefficients or VIP statistics into p values, using permutation
   resampling.}
 \author{Ron Wehrens}
-\seealso{\code{\link{get.biom}}, \code{\link{glmnet}}, \code{\link{scalefun}}}
+\seealso{\code{\link{get.biom}}, \code{\link{glmnet}}}
 \keyword{multivariate}
 \keyword{models}

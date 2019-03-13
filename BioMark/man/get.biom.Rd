@@ -12,7 +12,7 @@
 }
 \usage{
 get.biom(X, Y, fmethod = "all", type = c("stab", "HC", "coef"),
-         ncomp = 2, biom.opt = biom.options(), scale.p = "auto",
+         ncomp = 2, biom.opt = biom.options(), 
          \dots)
 \method{coef}{BMark}(object, \dots)
 \method{print}{BMark}(x, \dots)
@@ -38,11 +38,6 @@ get.biom(X, Y, fmethod = "all", type = c("stab", "HC", "coef"),
     other functions it should be one number. Default: 2.}
   \item{biom.opt}{Options for the biomarker selection - a list with
     several named elements. See \code{\link{biom.options}}.}
-  \item{scale.p}{Scaling. This is performed individually in every
-    crossvalidation iteration, and can have a profound effect on the
-    results. Default: "auto" (autoscaling). Other possible choices:
-    "none" for no scaling, "pareto" for pareto scaling, "log" and "sqrt" for log
-    and square root scaling, respectively.}
   \item{object, x}{A BMark object.}
   \item{\dots}{Further arguments for modelling functions. Often used to
     catch unused arguments.}
@@ -70,37 +65,36 @@ get.biom(X, Y, fmethod = "all", type = c("stab", "HC", "coef"),
   \code{"HC"} and \code{"stab"}, respectively.}
 \author{Ron Wehrens}
 \seealso{\code{\link{biom.options}}, \code{\link{get.segments}},
-  \code{\link{selection}}, \code{\link{scalefun}}}
+  \code{\link{selection}}}
 \examples{
 ## Real apple data (small set)
 data(spikedApples)
-apple.coef <- get.biom(X = spikedApples$dataMatrix,
-                       Y = factor(rep(1:2, each = 10)),
-                       ncomp = 2:3, type = "coef")
+X <- sqrt(spikedApples$dataMatrix)
+Y <- factor(rep(0:1, each = 10))
+ 
+apple.coef <- get.biom(X = X, Y = Y, ncomp = 2:3, type = "coef")
 coef.sizes <- coef(apple.coef) 
 sapply(coef.sizes, range)
 
 ## stability-based selection
 set.seed(17)
-apple.stab <- get.biom(X = spikedApples$dataMatrix,
-                       Y = factor(rep(1:2, each = 10)),
-                       ncomp = 2:3, type = "stab")
+apple.stab <- get.biom(X = X, Y = Y, ncomp = 2:3, type = "stab")
 selected.variables <- selection(apple.stab)
 unlist(sapply(selected.variables, function(x) sapply(x, length)))
-## Ranging from more than 70 for pcr, approx 40 for pls and student t,
+## Ranging from approx 70 for pcr, approx 40 for pls and t statistics,
 ## to 0-29 for the lasso
-unlist(sapply(selected.variables,
-              function(x) lapply(x, function(xx, y) sum(xx \%in\% y),
-              spikedApples$biom)))
-## TPs (stab): all find 5/5, except pcr.2 and the lasso with values for lambda
-## larger than 0.0484
 
-unlist(sapply(selected.variables,
-              function(x) lapply(x, function(xx, y) sum(!(xx \%in\% y)),
-              spikedApples$biom)))
-## FPs (stab): PCR finds most FPs (approx. 60), other latent-variable
-## methods approx 40, lasso allows for the optimal selection around 
-## lambda = 0.0702
+## check agreement with "true" biomarkers: here the number of true positives
+unlist(
+  sapply(selected.variables,
+         function(x)
+         lapply(x, function(xx) sum(xx \%in\% spikedApples$biom))))
+
+## False positives	 
+unlist(
+  sapply(selected.variables,
+         function(x)
+         lapply(x, function(xx) sum(!(xx \%in\% spikedApples$biom)))))
 
 ## regression example
 data(gasoline) ## from the pls package
@@ -109,17 +103,21 @@ gasoline.stab <- get.biom(gasoline$NIR, gasoline$octane,
 
 
 \dontrun{
-## Same for HC-based selection
-## Warning: takes a long time!
-apple.HC <- get.biom(X = spikedApples$dataMatrix,
-                     Y = factor(rep(1:2, each = 10)),
-                     ncomp = 2:3, type = "HC")
-sapply(apple.HC[names(apple.HC) != "info"],
-       function(x, y) sum(x$biom.indices \%in\% y),
-       spikedApples$biom)
-sapply(apple.HC[names(apple.HC) != "info"],
-       function(x, y) sum(!(x$biom.indices \%in\% y)),
-       spikedApples$biom)
+## Same for HC-based selection, takes some time
+apple.HC <- get.biom(X = X, Y = Y, ncomp = 2:3, type = "HC")
+
+## TP
+unlist(
+  sapply(apple.HC[names(apple.HC) != "info"],
+         function(x)
+         lapply(x,
+	        function(xx) sum(xx$biom.indices \%in\% spikedApples$biom))))
+## FP
+unlist(
+  sapply(apple.HC[names(apple.HC) != "info"],
+         function(x) 
+         lapply(x,
+	        function(xx) sum(!(xx$biom.indices \%in\% spikedApples$biom)))))
 }
 }
 \keyword{multivariate}

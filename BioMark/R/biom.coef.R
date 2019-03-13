@@ -1,11 +1,10 @@
-pcr.coef <- function(X, Y, ncomp, scale.p, ...)
+pcr.coef <- function(X, Y, ncomp, ...)
 {
   if (nlevels(Y) > 2)
     stop("multi-class discrimination not implemented for PCR")
 
   Y <- as.numeric(Y)
-  FUN <- scalefun(scale.p)
-  matrix(svdpc.fit(FUN(X), Y, ncomp = max(ncomp),
+  matrix(svdpc.fit(X, Y, ncomp = max(ncomp),
                    stripped = TRUE)$coefficients[, 1, ncomp],
          ncol(X), length(ncomp))
 }
@@ -13,26 +12,24 @@ pcr.coef <- function(X, Y, ncomp, scale.p, ...)
 
 ## Changed to widekernelpls.fit because this probably is the most
 ## relevant situation  
-pls.coef <- function(X, Y, ncomp, scale.p, ...)
+pls.coef <- function(X, Y, ncomp, ...)
 {
   if (nlevels(Y) > 2)
     stop("multi-class discrimination not implemented for PLS")
 
   Y <- as.numeric(Y)
-  FUN <- scalefun(scale.p)
-  matrix(widekernelpls.fit(FUN(X), Y, ncomp = max(ncomp),
+  matrix(widekernelpls.fit(X, Y, ncomp = max(ncomp),
                            stripped = TRUE)$coefficients[, 1, ncomp],
          ncol(X), length(ncomp))
 }
 
-vip.coef <- function(X, Y, ncomp, scale.p, ...)
+vip.coef <- function(X, Y, ncomp, ...)
 {
   if (nlevels(Y) > 2)
     stop("multi-class discrimination not implemented for VIP")
 
   Y <- as.numeric(Y)
-  FUN <- scalefun(scale.p)
-  plsmod <- plsr(Y ~ FUN(X), ncomp = max(ncomp), method = "widekernelpls")
+  plsmod <- plsr(Y ~ X, ncomp = max(ncomp), method = "widekernelpls")
   ww <- loading.weights(plsmod)
 
   result <- matrix(NA, ncol(X), length(ncomp))
@@ -47,31 +44,29 @@ vip.coef <- function(X, Y, ncomp, scale.p, ...)
   result
 }
 
-studentt.coef <- function(X, Y, scale.p, ...)
+studentt.coef <- function(X, Y, ...)
 {
   if (nlevels(Y) > 2)
     stop("only two-class discrimination implemented for studentt")
   
-  FUN <- scalefun(scale.p)
   TFUN <- studentt.fun(Y)
   
-  matrix(TFUN(FUN(X)), ncol = 1)
+  matrix(TFUN(X), ncol = 1)
 }
 
-shrinkt.coef <- function(X, Y, scale.p, ...)
+shrinkt.coef <- function(X, Y, ...)
 {
   if (nlevels(Y) > 2)
     stop("only two-class discrimination implemented for shrinkt")
   
-  FUN <- scalefun(scale.p)
   TFUN <- shrinkt.fun(L =  Y, var.equal = FALSE, verbose = FALSE)
   
-  matrix(TFUN(FUN(X)), ncol = 1)
+  matrix(TFUN(X), ncol = 1)
 }
 
 ## Nov 21, 2011: inclusion of the lasso. For classification, Y should
 ## be a factor!
-lasso.coef <- function(X, Y, scale.p, lasso.opt = biom.options()$lasso, ...)
+lasso.coef <- function(X, Y, lasso.opt = biom.options()$lasso, ...)
 {
   ## check whether family and character of Y agree
   fam <- lasso.opt$family
@@ -90,12 +85,9 @@ lasso.coef <- function(X, Y, scale.p, lasso.opt = biom.options()$lasso, ...)
       lasso.opt$family <- "binomial"
     }
   }
-  
-  ##   browser()
-  
-  FUN <- scalefun(scale.p)
-  glmargs <- c(list(x = FUN(X), y = Y, standardize = FALSE,
-                    dfmax = ncol(X)), lasso.opt)
+
+  glmargs <- c(list(x = X, y = Y),
+                    lasso.opt)
   
   huhn <- do.call(glmnet, glmargs)
   x.coef <- as.matrix(huhn$beta)

@@ -26,9 +26,7 @@ HCthresh <- function(pvec, alpha = .1, plotit = FALSE)
 ### Contrary to an earlier implementation for the spiked apple data,
 ### here we allow ncomp to be a vector. We do not allow subsets of
 ### variables in X.
-### Added June 23.
-### Further speed improvement: June 24. 
-pval.pcr <- function(X, Y, ncomp, scale.p, npermut) {
+pval.pcr <- function(X, Y, ncomp, npermut) {
   result <- matrix(0, ncol(X), length(ncomp))
   dimnames(result) <- list(colnames(X), ncomp)
   
@@ -36,8 +34,7 @@ pval.pcr <- function(X, Y, ncomp, scale.p, npermut) {
 
   Y <- matrix(as.integer(factor(Y)), ncol = 1)
   Y <- Y - mean(Y)
-  FUN <- scalefun(scale.p)
-  huhn <- La.svd(FUN(X))
+  huhn <- La.svd(X)
   DD <- huhn$d[1:maxcomp]
   DD2 <- DD^2
   TT <- huhn$u[, 1:maxcomp, drop = FALSE] %*%
@@ -62,10 +59,7 @@ pval.pcr <- function(X, Y, ncomp, scale.p, npermut) {
   result / npermut
 }
 
-## huhn0 <- pval.pcr(spikedApples$dataMatrix, rep(0:1, each = 10),
-##                     ncomp = 2:3, scale.p = "auto", npermut = 1000)
-
-pval.plsvip <- function(X, Y, ncomp, scale.p, npermut,
+pval.plsvip <- function(X, Y, ncomp, npermut,
                         smethod = c("both", "pls", "vip")) {
   smethod <- match.arg(smethod)
   nmethods <- ifelse(smethod == "both", 2, 1)
@@ -76,8 +70,6 @@ pval.plsvip <- function(X, Y, ncomp, scale.p, npermut,
   maxcomp <- max(ncomp)
   Y <- matrix(as.integer(factor(Y)), ncol = 1)
   Y <- Y - mean(Y)
-  FUN <- scalefun(scale.p)
-  Xsc <- FUN(X)
 
   get.vip <- function(plsmod) {
     ww <- loading.weights(plsmod)
@@ -91,14 +83,14 @@ pval.plsvip <- function(X, Y, ncomp, scale.p, npermut,
     result
   }
 
-  huhn <- plsr(Y ~ Xsc, maxcomp, method = "widekernelpls")
+  huhn <- plsr(Y ~ X, maxcomp, method = "widekernelpls")
   if ("pls" %in% smethod)
     pls.coefs <- abs(huhn$coefficients[,1,ncomp]) ## absolute size matters
   if ("vip" %in% smethod)
     vip.coefs <- get.vip(huhn)[,ncomp]              ## always positive  
   
   for (i in 1:npermut) {
-    huhn <- plsr(sample(Y) ~ Xsc, maxcomp, method = "widekernelpls")
+    huhn <- plsr(sample(Y) ~ X, maxcomp, method = "widekernelpls")
 
     if ("pls" %in% smethod) {
       nulls <- abs(huhn$coefficients[,1,ncomp])
@@ -115,5 +107,3 @@ pval.plsvip <- function(X, Y, ncomp, scale.p, npermut,
 
   result / npermut
 }
-## huhn0 <- pval.pls(spikedApples$dataMatrix, rep(0:1, each = 10),
-##                     ncomp = 2:3, scale.p = "auto", npermut = 1000)
