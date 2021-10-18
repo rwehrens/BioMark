@@ -10,10 +10,5 @@ citEntry(entry = "Article",
   number       = "10",
   pages        = "1--18",
   url          = "http://www.jstatsoft.org/v51/i10/",
-
-  textVersion  =
-  paste("Ron Wehrens, Pietro Franceschi (2012).",
-        "Meta-Statistics for Variable Selection: The R Package BioMark.",
-        "Journal of Statistical Software, 51(10), 1-18.",
-        "URL http://www.jstatsoft.org/v51/i10/.")
-)
+  doi          = "10.18637/jss.v051.i10"
+  )
